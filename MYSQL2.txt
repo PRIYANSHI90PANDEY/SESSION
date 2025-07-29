@@ -1,0 +1,515 @@
+-- Use correct database
+USE INFORMATION;
+
+-- Show available tables
+SHOW TABLES;
+
+-- Create NEW1 as full copy of CUSTOMER1
+CREATE TABLE NEW1 AS 
+SELECT * FROM CUSTOMER1;
+
+-- Display NEW1
+SELECT * FROM NEW1;
+0-- Create NEW2 with selected columns
+CREATE TABLE NEW2 AS 
+SELECT CID, CNAME, AREA FROM CUSTOMER1;
+
+
+-- Create NEW3 with AREA = 'KOTHRUD'
+CREATE TABLE NEW3 AS 
+SELECT * FROM CUSTOMER1 
+WHERE AREA = 'KOTHRUD';
+
+-- Create NEW4 with PIN = 411045
+CREATE TABLE NEW4 AS 
+SELECT * FROM CUSTOMER1 
+WHERE PIN = 411045;
+
+-- Create NEW6 with specific CNAMEs
+CREATE TABLE NEW6 AS 
+SELECT * FROM CUSTOMER1 
+WHERE CNAME IN ('SHUBHAM', 'ANIKET', 'ABHI');
+
+-- Display all NEW tables
+SELECT * FROM NEW1;
++-----+---------+-----------+--------+-------+
+| CID | CNAME   | AREA      | PIN    | PRICE |
++-----+---------+-----------+--------+-------+
+|  1  | SHUBHAM | KOTHRUD   | 411038 |  150  |
+|  2  | ANIKET  | KOTHRUD   | 411045 |   95  |
+|  3  | ABHI    | BANER     | 411045 |   85  |
+|  4  | PRIYA   | HADAPSAR  | 411028 |  100  |
++-----+---------+-----------+--------+-------+
+SELECT * FROM NEW2;
++-----+----------+-----------+---------+--------+
+| EID | ENAME    | DEPT      | ESALARY | DEPNO  |
++-----+----------+-----------+---------+--------+
+| 10  | ANJALI   | IT        | 65000   | NULL   |
+| 11  | REEMA    | OPERATION | 55000   | NULL   |
+| 12  | RAGHAV   | COMPUTER  | 75000   | NULL   |
+| 13  | DIKSHA   | IT        | NULL    | 10.0   |
+| 14  | RAKSHIT  | OPERATION | NULL    | 20.0   |
+| 15  | ABHIJEET | COMPUTER  | NULL    | NULL   |
++-----+----------+-----------+---------+--------+
+SELECT * FROM NEW3;
++-----+----------+-----------+---------+--------+
+| EID | ENAME    | DEPT      | ESALARY | DEPNO  |
++-----+----------+-----------+---------+--------+
+| 12  | RAGHAV   | COMPUTER  | 75000   | NULL   |
+| 10  | ANJALI   | IT        | 65000   | NULL   |
+| 11  | REEMA    | OPERATION | 55000   | NULL   |
+| 13  | DIKSHA   | IT        | NULL    | 10.0   |
+| 14  | RAKSHIT  | OPERATION | NULL    | 20.0   |
+| 15  | ABHIJEET | COMPUTER  | NULL    | NULL   |
++-----+----------+-----------+---------+--------+
+SELECT * FROM NEW4;
++-----------+
+| DEPT      |
++-----------+
+| IT        |
+| OPERATION |
+| COMPUTER  |
++-----------+
+SELECT * FROM NEW6;
++-----+---------+------+---------+--------+
+| EID | ENAME   | DEPT | ESALARY | DEPNO  |
++-----+---------+------+---------+--------+
+| 10  | ANJALI  | IT   | 65000   | NULL   |
+| 13  | DIKSHA  | IT   | NULL    | 10.0   |
++-----+---------+------+---------+--------+
+
+-- Drop NEW1 table
+DROP TABLE NEW1;
+
+-- View ORDER1 data
+SELECT * FROM ORDER1;
+
+-- CASE statement on ORDER1 prices
+SELECT CID, PRICE,
+  CASE
+    WHEN PRICE > 140 THEN 'PRICE IS GREATER THAN 140'
+    WHEN PRICE > 90 THEN 'PRICE IS GREATER THAN 90'
+    ELSE 'PRICE IS UNDER 90'
+  END AS EXAMPLE
+FROM ORDER1;
+
+-- View EMPLOYEE data
+SELECT * FROM EMPLOYEE;
++-----+---------+-----------+---------+--------+
+| EID | ENAME   | DEPT      | ESALARY | DEPNO  |
++-----+---------+-----------+---------+--------+
+|  1  | ASHWINI | IT        | 50000   |   10   |
+|  2  | SHUBHAM | IT        | 80000   |   10   |
+|  3  | ANIKET  | IT        | 70000   |   10   |
+|  4  | PARTH   | OPERATION | 50000   |   20   |
+|  5  | VIKAS   | OPERATION | 80000   |   20   |
+|  6  | ANSHU   | OPERATION | 70000   |   20   |
+|  7  | MADHURI | COMPUTER  | 60000   |   30   |
+|  8  | GAURAV  | COMPUTER  | 60000   |   30   |
+|  9  | ALISHA  | COMPUTER  | 90000   |   30   |
+| 10  | ALISHA  | COMPUTER  | 90000   |   30   |
++-----+---------+-----------+---------+--------+
+
+-- Insert into EMPLOYEE
+INSERT INTO EMPLOYEE VALUES (10, 'ANJALI', 'IT', 65000, NULL);
+INSERT INTO EMPLOYEE VALUES (11, 'REEMA', 'OPERATION', 55000, NULL);
+INSERT INTO EMPLOYEE VALUES (12, 'RAGHAV', 'COMPUTER', 75000, NULL);
+
+-- Handle NULLs with IFNULL
+SELECT *, IFNULL(DEPNO, 0) AS NEW_DEPNO FROM EMPLOYEE;
+SELECT EID, ENAME, IFNULL(DEPNO, 0) AS NEW_DEPNO FROM EMPLOYEE;
+
+-- Add NUM column with default 10
+ALTER TABLE EMPLOYEE ADD NUM INT DEFAULT 10;
+
+-- NULLIF usage
+SELECT *, NULLIF(DEPNO, NUM) AS NEW_DEP FROM EMPLOYEE;
+SELECT *, NULLIF(NUM, DEPNO) AS NEW_DEP FROM EMPLOYEE;
+SELECT EID, ENAME, DEPNO, NULLIF(DEPNO, NUM) AS NEW_DEP FROM EMPLOYEE;
+
+-- Insert more into EMPLOYEE
+INSERT INTO EMPLOYEE VALUES (13, 'DIKSHA', 'IT', NULL, 10, 10);
+INSERT INTO EMPLOYEE VALUES (14, 'RAKSHIT', 'OPERATION', NULL, 20, 10);
+INSERT INTO EMPLOYEE VALUES (15, 'ABHIJEET', 'COMPUTER', NULL, NULL, 10);
+
+-- COALESCE example
+SELECT EID, COALESCE(ESALARY, DEPNO) AS EXAMPLE FROM EMPLOYEE;
+SELECT *, COALESCE(ESALARY, DEPNO) AS EXAMPLE FROM EMPLOYEE;
+
+-- Filter by NULL and NOT NULL
+SELECT * FROM EMPLOYEE WHERE DEPNO IS NULL;
+SELECT * FROM EMPLOYEE WHERE DEPNO IS NOT NULL;
+
+-- IF condition on NULLs
+SELECT DEPNO, IF(DEPNO IS NULL, 'NO DEPARTMENT', DEPNO) AS RESULT FROM EMPLOYEE;
+SELECT DEPNO, IF(DEPNO IS NOT NULL, DEPNO, 'NO DEPARTMENT') AS RESULT FROM EMPLOYEE;
+USE information;
+
+SELECT NOW();
++---------------------+
+| CURRENT_TIMESTAMP() |
++---------------------+
+| 2025-07-29 23:37:51 |
++---------------------+
+SELECT CURRENT_TIMESTAMP();
++---------------------+
+| CURDATE() |
++---------------------+
+| 2025-07-29 |
++---------------------+
+SELECT CURDATE();
++---------------------+
+| CURRENT_DATE() |
++---------------------+
+| 2025-07-29 |
++---------------------+
+SELECT CURRENT_DATE();
+SELECT CURTIME();
++---------------------+
+| CURRENT_TIME() |
++---------------------+
+| '23:41:36'
+ |
++---------------------+
+SELECT CURRENT_TIME();
++---------------------+
+| CURRENT_TIMESTAMP() |
++---------------------+
+| 23:42:47 |
++---------------------+
+
+CREATE TABLE EVENT
+(
+EVNAME VARCHAR(20),
+EVENT_DATE DATE,
+EVENT_TIME TIME
+);
+
+SELECT * FROM EVENT;
+
+INSERT INTO EVENT VALUES('EVENT1' , '2025-05-21' , '14:30:00');
+INSERT INTO EVENT VALUES('EVENT2' , '2025-05-22' , '15:30:00');
+INSERT INTO EVENT VALUES('EVENT3' , '2025-05-23' , '16:30:00');
+INSERT INTO EVENT VALUES('EVENT4' , '2025-05-24' , '17:30:00');
+
+SELECT UTC_TIME();
++------------+
+| UTC_DATE() |
++------------+
+| 2025-07-29 |
++------------+
+SELECT UTC_DATE();
++------------+
+| UTC_DATE() |
++------------+
+| 2025-07-29 |
++------------+
+SELECT UTC_TIMESTAMP();
++------------+
+| UTC_TIMESTAMP() |
++------------+
+| '2025-07-29 18:20:29'|
++------------+
+
+INSERT INTO EVENT VALUES('SYSTEM_UPDATE1' , CURDATE(), CURTIME());
+INSERT INTO EVENT VALUES('SYSTEM_UPDATE2' , UTC_DATE(), UTC_TIME());
+ 
+
+SELECT * FROM EVENT WHERE DATE(EVENT_DATE) = '2025-05-21';
+SELECT * FROM EVENT WHERE TIME(EVENT_TIME) = '17:30:00';
+
+SELECT YEAR(CURDATE());
++----------------+
+| DAY(CURDATE()) |
++----------------+
+| 29             |
++----------------+
+SELECT DAY(CURDATE());
++----------------+
+| MONTH(CURDATE())|
++----------------+
+| 7             |
++----------------+
+SELECT MONTH(CURDATE());
++----------------+
+| WEEK(CURDATE()) |
++----------------+
+| 30             |
++----------------+
+SELECT WEEK(CURDATE());
++----------------+
+| WEEK(CURDATE()) |
++----------------+
+| 30             |
++----------------+
+
+SELECT EVNAME,EVENT_DATE,YEAR(EVENT_DATE) AS EVENT_YEAR FROM EVENT;
+SELECT EVNAME,EVENT_DATE,MONTH(EVENT_DATE) AS EVENT_MONTH FROM EVENT;
+SELECT EVNAME,EVENT_DATE,DAY(EVENT_DATE) AS EVENT_DAY FROM EVENT;
+
+SELECT YEARWEEK(CURDATE());
++----------------+
+|MONTHNAME(CURDATE())|
++----------------+
+| JULY            |
++----------------+
+SELECT MONTHNAME(CURDATE());
++----------------+
+| MONTHNAME(CURDATE()) |
++----------------+
+| JULY             |
++----------------+
+
+
+SELECT EVNAME, YEARWEEK(EVENT_DATE) AS WEEK_OF_YEAR FROM EVENT;
+SELECT EVNAME, MONTHNAME(EVENT_DATE) AS MONTH_NAME FROM EVENT;
+
+SELECT DAYNAME(CURDATE());
++----------------+
+| DAYOFMONTH(CURDATE())|
++----------------+
+| 29             |
++----------------+
+SELECT DAYOFMONTH(CURDATE());
++----------------+
+| DAYOFWEEK(CURDATE()) |
++----------------+
+| 3             |
++----------------+
+SELECT DAYOFWEEK(CURDATE());
++----------------+
+| DAYOFWEEK(CURDATE()) |
++----------------+
+| 4             |
++----------------+
+SELECT DAYOFYEAR(CURDATE());
++----------------+
+| DAYOFYEAR(CURDATE()) |
++----------------+
+| 211            |
++----------------+
+
+SELECT EVNAME, DAYNAME(EVENT_DATE) AS NAME_OF_DAY FROM EVENT;
+SELECT EVNAME, DAYOFMONTH(EVENT_DATE) AS DAY_OF_MONTH FROM EVENT;
+SELECT EVNAME, DAYOFWEEK(EVENT_DATE) AS DAY_OF_WEEK FROM EVENT;
+SELECT EVNAME, DAYOFYEAR(EVENT_DATE) AS DAY_OF_YEAR FROM EVENT;
+
+SELECT WEEKOFYEAR(CURDATE());
++------------------------------+
+|WEEKDAY(CURDATE())(CURDATE()) |
++------------------------------+
+| 2                            |
++------------------------------+
+
+SELECT WEEKDAY(CURDATE());
++------------------------------+
+|WEEKDAY(CURDATE())(CURDATE()) |
++------------------------------+
+| 2                            |
++------------------------------+
+
+SELECT EVNAME, WEEKOFYEAR(EVENT_DATE) AS WEEK_OF_YEAR FROM EVENT;
+SELECT EVNAME, WEEKDAY(EVENT_DATE) AS WEEK_DAY FROM EVENT;
+
+INSERT INTO EVENT VALUES('SYSTEM_UPDATE3' , CURDATE(), LOCALTIME());
+
+SELECT DATEDIFF(CURDATE() , EVENT_DATE) AS DAY_SINCE_EVENT FROM EVENT;
+SELECT EVNAME, EVENT_DATE, CURDATE(), DATEDIFF(CURDATE() , EVENT_DATE) AS DAY_SINCE_EVENT FROM EVENT;
+
+SELECT EVNAME , EVENT_DATE , DATE_ADD(EVENT_DATE , INTERVAL 20 DAY) AS NEW_DATE FROM EVENT;
+SELECT EVNAME , EVENT_DATE , DATE_ADD(EVENT_DATE , INTERVAL 2 MONTH) AS NEW_DATE FROM EVENT;
+SELECT EVNAME , EVENT_DATE , DATE_ADD(EVENT_DATE , INTERVAL 1 YEAR) AS NEW_DATE FROM EVENT;
+SELECT EVNAME , EVENT_DATE , DATE_ADD(EVENT_DATE , INTERVAL 1 WEEK) AS NEW_DATE FROM EVENT;
+use info;
+
+SELECT * FROM STUDENT; -- 5 RECORDS
+
+SET AUTOCOMMIT=OFF;
+
+DELETE FROM STUDENT WHERE ID=5;
+SELECT * FROM STUDENT; -- 4 RECORDS
+
+COMMIT;
+SELECT * FROM STUDENT; -- 4 RECORDS
+DELETE FROM STUDENT WHERE ID=4;
+SELECT * FROM STUDENT; -- 3 RECORDS
+
+ROLLBACK;
+SELECT * FROM STUDENT; -- 4 RECORDS
+
+-- ************* SAVEPOINT******************
+SELECT * FROM STUDENT; -- 5 RECORDS
+COMMIT;
+SELECT * FROM STUDENT; -- 5  RECORDS
+
+DELETE FROM STUDENT WHERE ID=5;
+SELECT * FROM STUDENT; -- 4 RECORDS
+SAVEPOINT S1;
+
+DELETE FROM STUDENT WHERE ID=4;
+SELECT * FROM STUDENT; -- 3 RECORDS
+
+ROLLBACK TO S1;
+SELECT * FROM STUDENT; -- 4 RECORDS
+
+ROLLBACK;
+
+
+SELECT * FROM STUDENT; -- 5 RECORDS
+COMMIT;
+
+DELETE FROM STUDENT WHERE ID=5;
+SAVEPOINT S2;
+DELETE FROM STUDENT WHERE ID=4;
+
+ROLLBACK;
+
+SELECT COUNT(*) FROM INFO.STUDENT;
+
+
+
+START TRANSACTION;
+DELETE FROM STUDENT WHERE ID=4;
+DELETE FROM STUDENT WHERE ID=3;
+SELECT * FROM STUDENT;
+
+COMMIT;
+ROLLBACK;
+
+
+
+
+USE INFORMATION;
+
+SELECT USER FROM MYSQL.USER;
++----------------+
+| HOST |
++----------------+
+| LOCALHOST      |  
+| LOCALHOST      |
+| LOCALHOST      |  
+| LOCALHOST      |
+|+----------------+
+SELECT HOST FROM MYSQL.USER;
++------------------+-----------+
+| USER             | HOST      |
++------------------+-----------+
+| mysql.infoschema | localhost |
+| mysql.session    | localhost |
+| mysql.sys        | localhost |
+| root             | localhost |
++------------------+-----------+
+SELECT USER , HOST FROM MYSQL.USER;
++------------------+-----------+----------------+
+| USER             | HOST      | ACCOUNT_LOCKED |
++------------------+-----------+----------------+
+| mysql.infoschema | localhost | Y              |
+| mysql.session    | localhost | Y              |
+| mysql.sys        | localhost | Y              |
+| root             | localhost | N              |
++------------------+-----------+----------------+
+SELECT USER , HOST , ACCOUNT_LOCKED FROM MYSQL.USER;
++------------------+-----------+----------------+-------------------+
+| USER             | HOST      | ACCOUNT_LOCKED | PASSWORD_EXPIRED  |
++------------------+-----------+----------------+-------------------+
+| mysql.infoschema | localhost | Y              | Y                 |
+| mysql.session    | localhost | Y              | Y                 |
+| mysql.sys        | localhost | Y              | Y                 |
+| root             | localhost | N              | N                 |
++------------------+-----------+----------------+-------------------+
+SELECT USER , HOST , ACCOUNT_LOCKED , PASSWORD_EXPIRED FROM MYSQL.USER;
++------------------+-----------+----------------+-------------------+
+| USER             | HOST      | ACCOUNT_LOCKED | PASSWORD_EXPIRED  |
++------------------+-----------+----------------+-------------------+
+| mysql.infoschema | localhost | N              | N                 |
+| mysql.session    | localhost | N              | N                 |
+| mysql.sys        | localhost | N              | N                 |
+| root             | localhost | N              | N                 |
++------------------+-----------+----------------+-------------------+
+
+CREATE USER 'ASH'@'LOCALHOST' IDENTIFIED BY 'PASSWORD';
+SHOW GRANTS FOR 'ASH'@'LOCALHOST';
+GRANT ALL PRIVILEGES ON INFO.* TO 'ASH'@'LOCALHOST';
+
+SELECT USER FROM MYSQL.USER WHERE USER NOT LIKE 'mysql.%';
++------------------+
+| USER             |
++------------------+
+| mysql.infoschema |
+| mysql.session    |
+| mysql.sys        |
++------------------+
+SELECT USER FROM MYSQL.USER WHERE USER LIKE 'mysql.%';
++------------------+
+| USER             |
++------------------+
+| mysql.infoschema |
+| mysql.session    |
+| mysql.sys        |
++------------------+
+
+SHOW PRIVILEGES;
++-------------------------+--------------------------------------------------+---------------------------------------------+
+| Privilege               | Context                                          | Comment                                     |
++-------------------------+--------------------------------------------------+---------------------------------------------+
+| Alter                   | Tables                                           | To alter the table                          |
+| Alter routine           | Functions, Procedures                            | To alter or drop stored functions/procedures|
+| Create                  | Databases, Tables, Indexes                       | To create new databases and tables          |
+| Create routine          | Databases                                        | To create stored functions/procedures       |
+| Create temporary tables | Databases                                        | To create temporary tables                  |
+| Create view             | Tables                                           | To create new views                         |
+| Delete                  | Tables                                           | To delete existing rows                     |
+| Drop                    | Databases, Tables                                | To drop databases and tables                |
+| Execute                 | Functions, Procedures                            | To execute stored routines                  |
+| Index                   | Tables                                           | To create or drop indexes                   |
+| Insert                  | Tables                                           | To insert data into tables                  |
+| Lock tables             | Databases                                        | To use LOCK TABLES (in transactions)        |
+| Process                 | Server                                           | To view threads in process list             |
+| References              | Databases, Tables                                | To create foreign keys                      |
+| Reload                  | Server                                           | To reload or refresh tables/logs etc.       |
+| Select                  | Tables                                           | To read rows from tables                    |
+| Show databases          | Server                                           | To see all databases with SHOW DATABASES    |
+| Show view               | Tables                                           | To show views                               |
+| Shutdown                | Server                                           | To shut down the server                     |
+| Super                   | Server                                           | Many admin operations, e.g., KILL, SET GLOBAL|
+| Trigger                 | Tables                                           | To create and drop triggers                 |
+| Update                  | Tables                                           | To update existing rows                     |
+| Usage                   | Server                                           | No privileges (only connect)                |
++-------------------------+--------------------------------------------------+---------------------------------------------+
+
+SHOW GRANTS FOR CURRENT_USER;
++---------------------------------------------------------------------------------------------------------------+
+| Grants                                                                                                        |
++---------------------------------------------------------------------------------------------------------------+
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, GRANT OPTION,           |
+| REFERENCES, INDEX, ALTER, SHOW DATABASES, SUPER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE,              |
+| REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE,                |
+| CREATE USER, EVENT, TRIGGER, CREATE TABLESPACE, CREATE ROLE, DROP ROLE, APPLICATION_PASSWORD_ADMIN,          |
+| CONNECTION_ADMIN, PERSIST_RO_VARIABLES_ADMIN, SET_USER_ID, XA_RECOVER_ADMIN, SYSTEM_USER, SYSTEM_VARIABLES_ADMIN |
+| ON . TO 'root'@'localhost' WITH GRANT OPTION                                                                |
+|                                                                                                               |
+| GRANT PROXY ON ''@'' TO 'root'@'localhost' WITH GRANT OPTION                                                  |
++---------------------------------------------------------------------------------------------------------------+
+
+CREATE USER 'ASHWINI'@'LOCALHOST' IDENTIFIED BY 'PASSWORD';
+SHOW GRANTS FOR 'ASHWINI'@'LOCALHOST';
+GRANT SELECT,UPDATE ON INFO.* TO 'ASHWINI'@'LOCALHOST';
+
+CREATE USER 'SHUBHAM'@'LOCALHOST' IDENTIFIED BY 'ABCDEFGHI';
+SHOW GRANTS FOR 'SHUBHAM'@'LOCALHOST';
+GRANT SELECT,UPDATE,INSERT,DELETE ON INFO.* TO 'SHUBHAM'@'LOCALHOST';
+
+REVOKE DELETE ON INFO.* FROM 'SHUBHAM'@'LOCALHOST';
+SHOW GRANTS FOR 'SHUBHAM'@'LOCALHOST';
+
+DROP USER 'ASH'@'LOCALHOST';
+DROP USER 'ashwini'@'LOCALHOST' ;
+DROP USER  'Ashwini'@'LOCALHOST';
+USER
+ROOT
+SELECT USER FROM MYSQL.USER WHERE USER NOT LIKE 'mysql.%';
+USER
+ROOT
+
+CREATE USER 'ashwini'@'LOCALHOST' IDENTIFIED BY 'PASSWORD';
+CREATE USER 'Ashwini'@'LOCALHOST' IDENTIFIED BY 'PASSWORD';
